@@ -1,5 +1,6 @@
 from lxml import etree
 import copy
+
 OVAL_file = 'rhel-8.oval.xml'
 file_input = open(OVAL_file, 'rb')
 
@@ -69,5 +70,6 @@ for state in all_states:
 new_variables.extend(variables)
 
 with open("output.xml", "wb") as output_file:
-    output_file.write(etree.tostring(new_root, encoding="utf-8", xml_declaration=True, pretty_print=True))
+    output_file.write(etree.tostring(new_root, encoding="utf-8",
+                                     xml_declaration=True, pretty_print=True))
 
