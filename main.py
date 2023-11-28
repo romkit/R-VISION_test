@@ -1,10 +1,11 @@
 from lxml import etree
 import copy
 
+namespace = {'oval': 'http://oval.mitre.org/XMLSchema/oval-definitions-5'}
+
 OVAL_file = 'rhel-8.oval.xml'
 file_input = open(OVAL_file, 'rb')
 
-namespace = {'oval': 'http://oval.mitre.org/XMLSchema/oval-definitions-5'}
 
 def find_comment(elem, value, refs: list, refs_neighbors: list):
     for child in elem.iterchildren():
@@ -37,18 +38,18 @@ new_objects = etree.SubElement(new_root, "objects")
 new_states = etree.SubElement(new_root, "states")
 new_variables = etree.SubElement(new_root, "variables")
 
-#добавление генератора к новому дереву
+# добавление генератора к новому дереву
 new_generator.extend(generator)
 
 refs = []
 refs_neighbors = []
-#удаление критериев на подпись, сбор ссылок на их тесты и соседних критериев; добавление описаний
+# удаление критериев на подпись, сбор ссылок на их тесты и соседних критериев; добавление описаний
 for definition in definitions:
     find_comment(definition, 'is signed with Red Hat redhatrelease2 key', refs, refs_neighbors)
     new_definitions.append(definition)
 
 tests_refs = []
-#добавление нужных тестов; получение ссылок на состояния после проверок на версию ("соседних")
+# добавление нужных тестов; получение ссылок на состояния после проверок на версию ("соседних")
 for test in all_tests:
     if test.attrib['id'] in refs:
         continue
@@ -59,17 +60,16 @@ for test in all_tests:
 key_state = all_states[1].getchildren()[0]
 new_objects.extend(all_objects)
 
-#добавление нужных состояний; в каждое состояние версии добавить параметр наличия подписи
+# добавление нужных состояний; в каждое состояние версии добавить параметр наличия подписи
 for state in all_states:
     if state.attrib['id'] in tests_refs:
         key_state_copy = copy.deepcopy(key_state)
         state.append(key_state_copy)
     new_states.append(state)
 
-#добавление переменных
+# добавление переменных
 new_variables.extend(variables)
 
 with open("output.xml", "wb") as output_file:
     output_file.write(etree.tostring(new_root, encoding="utf-8",
                                      xml_declaration=True, pretty_print=True))
-
