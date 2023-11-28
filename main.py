@@ -1,6 +1,6 @@
 from lxml import etree
 import copy
-OVAL_file = 'C:\\Users\\romki\\Downloads\\rhel-8.oval.xml\\rhel-8.oval.xml'
+OVAL_file = 'rhel-8.oval.xml'
 file_input = open(OVAL_file, 'rb')
 
 namespace = {'oval': 'http://oval.mitre.org/XMLSchema/oval-definitions-5'}
